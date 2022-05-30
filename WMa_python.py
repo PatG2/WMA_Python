@@ -152,7 +152,6 @@ for contour in good_contours:
     
     if len(good_park_zas) > len(good_park) and len(good_park_zas) > len(good_stacja) and len(good_park_zas) > len(good_przejscie_piesi) and len(good_park_zas) > len(good_przejscie_rowery):
         print("Jest to znak parkingu zastrzezonego!") 
-        
     if len(good_stacja) > len(good_park_zas) and len(good_stacja) > len(good_park) and len(good_stacja) > len(good_przejscie_piesi) and len(good_stacja) > len(good_przejscie_rowery):
         print("Jest to znak stacji paliw!")
         
