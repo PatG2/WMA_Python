@@ -25,9 +25,10 @@ stacja_mask = cv2.inRange(stacja_hsv, white_lower_shape, white_upper_shape)
 przejscie_piesi_mask = cv2.inRange(przejscie_piesi_hsv, white_lower_shape, white_upper_shape)
 przejscie_rowery_mask = cv2.inRange(przejscie_rowery_hsv, white_lower_shape, white_upper_shape)
 
+font = cv2.FONT_HERSHEY_SIMPLEX
 
 #Wczytanie orginalnego obrazu:
-image_small= cv2.imread('21.jpg.JPEG')
+image_small= cv2.imread('9.jpg.JPEG')
 image_small = cv2.pyrDown(image_small)
 
 #filtr medianowy
@@ -56,8 +57,6 @@ mask_morph2 = cv2.dilate(mask_morph,kernel2,iterations=1)
 #kontury na niebieskich elementach najzwyklejsze
 contours, _ = cv2.findContours(mask_morph2, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
-cv2.imshow("s", mask_morph2)
-
 good_contours = []
 i = 0
 #Sprawdzenie czy kontury są prostokątami/kwadratami
@@ -79,17 +78,15 @@ good_przejscie_piesi = []
 good_przejscie_rowery = []
 
 
-windowname = "ROI"
-widow = "name"
-
+#windowname = "ROI"
 
 for contour in good_contours:
     x,y,w,h = cv2.boundingRect(contour)
     ROI = image_small[y:y+h, x:x+w]
     ROI_gray = cv2.cvtColor(ROI, cv2.COLOR_BGR2GRAY)
     ROI_mask = cv2.adaptiveThreshold(ROI_gray, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY, 51, 0)
-    cv2.imshow(windowname, ROI_mask)
-    windowname = windowname + '1'
+    #cv2.imshow(windowname, ROI_mask)
+    #windowname = windowname + '1'
     
     kp1, des1 = sift.detectAndCompute(ROI_mask, None)
     kp_park, des_park = sift.detectAndCompute(park_mask, None)
@@ -126,24 +123,28 @@ for contour in good_contours:
             
     if len(good_park) > len(good_park_zas) and len(good_park) > len(good_stacja) and len(good_park) > len(good_przejscie_piesi) and len(good_park) > len(good_przejscie_rowery):
         print("Jest to znak parkingu!")
-    
+        cv2.putText(image_small,'Parking',(x,y), font, 0.5,(0,0,255),2,cv2.LINE_AA)
+
     if len(good_park_zas) > len(good_park) and len(good_park_zas) > len(good_stacja) and len(good_park_zas) > len(good_przejscie_piesi) and len(good_park_zas) > len(good_przejscie_rowery):
         print("Jest to znak parkingu zastrzezonego!") 
+        cv2.putText(image_small,'Parking zastrzezony',(x,y), font, 0.5,(0,0,255),2,cv2.LINE_AA)
         
     if len(good_stacja) > len(good_park_zas) and len(good_stacja) > len(good_park) and len(good_stacja) > len(good_przejscie_piesi) and len(good_stacja) > len(good_przejscie_rowery):
         print("Jest to znak stacji paliw!")
+        cv2.putText(image_small,'Stacja paliw',(x,y), font, 0.5,(0,0,255),2,cv2.LINE_AA)
         
     if len(good_przejscie_piesi) > len(good_park_zas) and len(good_przejscie_piesi) > len(good_stacja) and len(good_przejscie_piesi) > len(good_park) and len(good_przejscie_piesi) > len(good_przejscie_rowery):
         print("Jest to znak przejscia dla pieszych!")
+        cv2.putText(image_small,'Przejscie dla pieszych',(x,y), font, 0.5,(0,0,255),2,cv2.LINE_AA)
         
     if len(good_przejscie_rowery) > len(good_park_zas) and len(good_przejscie_rowery) > len(good_stacja) and len(good_przejscie_rowery) > len(good_przejscie_piesi) and len(good_przejscie_rowery) > len(good_park):
         print("Jest to znak przejazdu dla rowerow!")
-     
-print(good_park)
-print(good_park_zas)
-print(good_stacja)
-print(good_przejscie_piesi)
-print(good_przejscie_rowery)      
-cv2.imshow("kontury", image_small)  
+        cv2.putText(image_small,'Przejazd dla rowerow',(x,y), font, 0.5,(0,0,255),2,cv2.LINE_AA)
+   
+    if len(good_park)==0 and len(good_park_zas) ==0 and len(good_stacja) ==0 and len(good_przejscie_piesi) == 0:    
+        print("Nie udalo sie rozpoznac znaku!")
+        cv2.putText(image_small,'Nie rozpoznano znaku',(x,y), font, 0.5,(0,0,255),2,cv2.LINE_AA)
+      
+cv2.imshow("Rezultat", image_small)  
 cv2.waitKey()
 cv2.destroyAllWindows()
