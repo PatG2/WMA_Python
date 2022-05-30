@@ -37,7 +37,7 @@ median = cv2.medianBlur(image_small,3)
 hsv_image = cv2.cvtColor(median, cv2.COLOR_BGR2HSV)
 
 #Definicja ograniczeń dla niebieskiego koloru w hsv
-blue_lower = np.array([100,140,60])
+blue_lower = np.array([100,160,60])
 blue_upper = np.array([120,255,180])
 
 #maska nakładana na obraz w celu wykrycia elementów tylko z przedziału wartości zdefiniowanej dla ograniczeń koloru niebieskiego
