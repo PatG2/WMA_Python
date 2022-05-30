@@ -1,7 +1,5 @@
 import cv2
 import numpy as np
-
-
  
 #wczytanie bazowych zdjec
 park_shape = cv2.imread('Parking_shape.PNG')
@@ -28,7 +26,7 @@ przejscie_rowery_mask = cv2.inRange(przejscie_rowery_hsv, white_lower_shape, whi
 font = cv2.FONT_HERSHEY_SIMPLEX
 
 #Wczytanie orginalnego obrazu:
-image_small= cv2.imread('9.jpg.JPEG')
+image_small= cv2.imread('1.jpg.JPEG')
 image_small = cv2.pyrDown(image_small)
 
 #filtr medianowy
