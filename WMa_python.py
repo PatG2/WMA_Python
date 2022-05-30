@@ -1,6 +1,6 @@
 import cv2
 import numpy as np
-import math
+
 
  
 #wczytanie bazowych zdjec
@@ -25,15 +25,9 @@ stacja_mask = cv2.inRange(stacja_hsv, white_lower_shape, white_upper_shape)
 przejscie_piesi_mask = cv2.inRange(przejscie_piesi_hsv, white_lower_shape, white_upper_shape)
 przejscie_rowery_mask = cv2.inRange(przejscie_rowery_hsv, white_lower_shape, white_upper_shape)
 
-park_moments = cv2.moments(park_mask)
-park_zas_moments = cv2.moments(park_zas_mask)
-stacja_moments = cv2.moments(stacja_mask)
-przejscie_piesi_moments = cv2.moments(przejscie_piesi_mask)
-przejscie_rowery_moments = cv2.moments(przejscie_rowery_mask)
-
 
 #Wczytanie orginalnego obrazu:
-image_small= cv2.imread('11.jpg.JPEG')
+image_small= cv2.imread('21.jpg.JPEG')
 image_small = cv2.pyrDown(image_small)
 
 #filtr medianowy
@@ -43,7 +37,7 @@ median = cv2.medianBlur(image_small,3)
 hsv_image = cv2.cvtColor(median, cv2.COLOR_BGR2HSV)
 
 #Definicja ograniczeń dla niebieskiego koloru w hsv
-blue_lower = np.array([100,160,60])
+blue_lower = np.array([100,140,60])
 blue_upper = np.array([120,255,180])
 
 #maska nakładana na obraz w celu wykrycia elementów tylko z przedziału wartości zdefiniowanej dla ograniczeń koloru niebieskiego
@@ -62,6 +56,7 @@ mask_morph2 = cv2.dilate(mask_morph,kernel2,iterations=1)
 #kontury na niebieskich elementach najzwyklejsze
 contours, _ = cv2.findContours(mask_morph2, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
+cv2.imshow("s", mask_morph2)
 
 good_contours = []
 i = 0
@@ -92,7 +87,7 @@ for contour in good_contours:
     x,y,w,h = cv2.boundingRect(contour)
     ROI = image_small[y:y+h, x:x+w]
     ROI_gray = cv2.cvtColor(ROI, cv2.COLOR_BGR2GRAY)
-    ROI_mask = cv2.adaptiveThreshold(ROI_gray, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY, 45, 0)
+    ROI_mask = cv2.adaptiveThreshold(ROI_gray, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY, 51, 0)
     cv2.imshow(windowname, ROI_mask)
     windowname = windowname + '1'
     
@@ -134,6 +129,7 @@ for contour in good_contours:
     
     if len(good_park_zas) > len(good_park) and len(good_park_zas) > len(good_stacja) and len(good_park_zas) > len(good_przejscie_piesi) and len(good_park_zas) > len(good_przejscie_rowery):
         print("Jest to znak parkingu zastrzezonego!") 
+        
     if len(good_stacja) > len(good_park_zas) and len(good_stacja) > len(good_park) and len(good_stacja) > len(good_przejscie_piesi) and len(good_stacja) > len(good_przejscie_rowery):
         print("Jest to znak stacji paliw!")
         
@@ -142,13 +138,12 @@ for contour in good_contours:
         
     if len(good_przejscie_rowery) > len(good_park_zas) and len(good_przejscie_rowery) > len(good_stacja) and len(good_przejscie_rowery) > len(good_przejscie_piesi) and len(good_przejscie_rowery) > len(good_park):
         print("Jest to znak przejazdu dla rowerow!")
-    
-#cv2.imshow("kontury222", stacja_mask) 
-#cv2.imshow("kontury22", park_mask) 
-#cv2.imshow("kontury2", park_zas_mask) 
-#cv2.imshow("kontur", przejscie_piesi_mask) 
-#cv2.imshow("kontu", przejscie_rowery_mask) 
-      
+     
+print(good_park)
+print(good_park_zas)
+print(good_stacja)
+print(good_przejscie_piesi)
+print(good_przejscie_rowery)      
 cv2.imshow("kontury", image_small)  
 cv2.waitKey()
 cv2.destroyAllWindows()
