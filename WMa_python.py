@@ -31,24 +31,6 @@ stacja_moments = cv2.moments(stacja_mask)
 przejscie_piesi_moments = cv2.moments(przejscie_piesi_mask)
 przejscie_rowery_moments = cv2.moments(przejscie_rowery_mask)
 
-park_hu = cv2.HuMoments(park_moments)
-park_zas_hu = cv2.HuMoments(park_zas_moments)
-stacja_hu = cv2.HuMoments(stacja_moments)
-przejscie_piesi_hu = cv2.HuMoments(przejscie_piesi_moments)
-przejscie_rowery_hu = cv2.HuMoments(przejscie_rowery_moments)
-
-#for i in range(0,7):
-#    park_hu[i] = -1* math.copysign(1.0, park_hu[i]) * math.log10(abs(park_hu[i]))
-#    park_zas_hu[i] = -1* math.copysign(1.0, park_zas_hu[i]) * math.log10(abs(park_zas_hu[i]))
-#    stacja_hu[i] = -1* math.copysign(1.0, stacja_hu[i]) * math.log10(abs(stacja_hu[i]))
-#    przejscie_piesi_hu[i] = -1* math.copysign(1.0, przejscie_piesi_hu[i]) * math.log10(abs(przejscie_piesi_hu[i]))
-#    przejscie_rowery_hu[i] = -1* math.copysign(1.0, przejscie_rowery_hu[i]) * math.log10(abs(przejscie_rowery_hu[i]))
-    
-#print(park_hu, "park")
-#print(park_zas_hu, "park zas")
-#print(stacja_hu, "stacja")
-#print(przejscie_piesi_hu, "piesi")
-#print(przejscie_rowery_hu, "rowey")
 
 #Wczytanie orginalnego obrazu:
 image_small= cv2.imread('11.jpg.JPEG')
@@ -160,33 +142,13 @@ for contour in good_contours:
         
     if len(good_przejscie_rowery) > len(good_park_zas) and len(good_przejscie_rowery) > len(good_stacja) and len(good_przejscie_rowery) > len(good_przejscie_piesi) and len(good_przejscie_rowery) > len(good_park):
         print("Jest to znak przejazdu dla rowerow!")
-    #ROI_moments = cv2.moments(ROI_mask)
-    #ROI_hu = cv2.HuMoments(ROI_moments)
-    #for i in range(0,7):  
-     #   ROI_hu[i] = -1* math.copysign(1.0, ROI_hu[i]) * math.log10(abs(ROI_hu[i]))
     
-   #print(ROI_hu)
-   #match_park = cv2.matchShapes(ROI_mask, park_mask, 3, 1)
-   #match_park_zas = cv2.matchShapes(ROI_mask, park_zas_mask, 3, 1)
-   #match_stacja = cv2.matchShapes(ROI_mask, stacja_mask, 3, 1)
-   #match_przejscie_piesi = cv2.matchShapes(ROI_mask, przejscie_piesi_mask, 3, 1)
-   #match_przejscie_rowery = cv2.matchShapes(ROI_mask, przejscie_rowery_mask, 3, 1)
-        
- 
-
-cv2.imshow("kontury222", stacja_mask) 
-cv2.imshow("kontury22", park_mask) 
-cv2.imshow("kontury2", park_zas_mask) 
-cv2.imshow("kontur", przejscie_piesi_mask) 
-cv2.imshow("kontu", przejscie_rowery_mask) 
-
-
-
-
-        
-
-#img3 = cv2.drawMatchesKnn(ROI_mask, kp1, stacja_mask, kp2, good, None, flags=cv2.DrawMatchesFlags_NOT_DRAW_SINGLE_POINTS)
-
+#cv2.imshow("kontury222", stacja_mask) 
+#cv2.imshow("kontury22", park_mask) 
+#cv2.imshow("kontury2", park_zas_mask) 
+#cv2.imshow("kontur", przejscie_piesi_mask) 
+#cv2.imshow("kontu", przejscie_rowery_mask) 
+      
 cv2.imshow("kontury", image_small)  
 cv2.waitKey()
 cv2.destroyAllWindows()
