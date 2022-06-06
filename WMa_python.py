@@ -1,6 +1,10 @@
 import cv2
 import numpy as np
- 
+import numpy as np
+import tensorflow as tf
+
+#wczytanie moedlu
+model = tf.keras.models.load_model("C:/Users/patry/m2.h5")
 #wczytanie bazowych zdjec
 park_shape = cv2.imread('Parking_shape.PNG')
 park_zas_shape = cv2.imread('Parking_zastrzezone_shape.PNG')
@@ -66,7 +70,7 @@ for contour in contours:
     cv2.drawContours(hsv_image, [contour], 0, (0,0,0),1)    
     i = i+1
     
-sift = cv2.SIFT_create()
+sift = cv2.SIFT_create() #SIFT w duzym uogólnieniu szuka kluczowych puntków na obrazie
 bf = cv2.BFMatcher()
 
 good_park = []
@@ -86,6 +90,22 @@ for contour in good_contours:
     #cv2.imshow(windowname, ROI_mask)
     #windowname = windowname + '1'
     
+    
+    resized_up = cv2.resize(ROI, (150,150), interpolation= cv2.INTER_AREA)
+    input_arr = np.array([resized_up])
+    predictions = model.predict(input_arr)
+    nr=[]
+    for pred in predictions:
+        n=0
+        for value in pred:
+            if value==max(pred):
+                nr.append(n);
+            n+=1
+    print(nr)
+    
+    
+    #Szukanie kluczowych punktów i deksryptorów z użyciem Scale-Invariant Feature Transform
+    cv2.putText(image_small,str(nr),(x-50,y), font, 0.5,(0,255,0),2,cv2.LINE_AA)
     kp1, des1 = sift.detectAndCompute(ROI_mask, None)
     kp_park, des_park = sift.detectAndCompute(park_mask, None)
     kp_park_zas, des_park_zas = sift.detectAndCompute(park_zas_mask, None)
@@ -93,12 +113,14 @@ for contour in good_contours:
     kp_przejscie_piesi, des_przejscie_piesi = sift.detectAndCompute(przejscie_piesi_mask, None)
     kp_przejscie_rowery, des_przejscie_rowery = sift.detectAndCompute(przejscie_rowery_mask, None)
 
+    #porównanie kluczowych punktów miedzy szablonem a zdjeciem
     matches_park = bf.knnMatch(des1,des_park,k=2)
     matches_park_zas = bf.knnMatch(des1,des_park_zas,k=2)
     matches_stacja = bf.knnMatch(des1,des_stacja,k=2)
     matches_przejscie_piesi = bf.knnMatch(des1,des_przejscie_piesi,k=2)
     matches_przejscie_rowery = bf.knnMatch(des1,des_przejscie_rowery,k=2)
 
+    #Ratio test
     for m,n in matches_park:
         if m.distance < 0.55*n.distance:
             good_park.append([m])
